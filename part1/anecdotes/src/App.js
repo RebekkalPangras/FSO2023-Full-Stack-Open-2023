@@ -44,7 +44,7 @@ const App = () => {
       <Display text="Anecdote of the day" />
       <DisplayAnecdote anecdote={anecdotes[selected]} />
       <DisplayVote voteCount={voteCount[selected]} />
-      <Button handleClick={setNext} text="next anecdote" />
+      <Button handleClick={setNext} text="Next anecdote" />
       <Button handleClick={increaseVote} text="Vote" />
       <Display text="Anecdote with most votes" />
       <DisplayAnecdote anecdote={anecdotes[maxVote]} />
