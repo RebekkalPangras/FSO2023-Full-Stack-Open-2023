@@ -13,11 +13,12 @@ const App = () => {
   ]
 
   const [selected, setSelected] = useState(0)
+  const [maxVote, setMaxVote] = useState(0)
   const [voteCount, setVoteCount] = useState({})
 
   const setNext = () => {
-    const random_number = Math.floor(Math.random() * 8)
-    setSelected(random_number)
+    const randomNumber = Math.floor(Math.random() * 8)
+    setSelected(randomNumber)
   }
 
   const increaseVote = () => {
@@ -27,24 +28,33 @@ const App = () => {
     } else {
       currentVoteCount[selected] = 1
     }
+    getMaxVote(currentVoteCount)
     setVoteCount(currentVoteCount)
+  }
+
+  const getMaxVote = (currentVoteCount) => {
+    let valArr = Object.values(currentVoteCount)
+    let keyArr = Object.keys(currentVoteCount)
+    let maxVoteValueIndex = valArr.indexOf(Math.max(...valArr))
+    setMaxVote(keyArr[maxVoteValueIndex])
   }
 
   return (
     <>
-      <div>
-        {anecdotes[selected]}
-      </div>
+      <h3>Anecdote of the day</h3>
+      <DisplayAnecdote anecdote={anecdotes[selected]} />
       <DisplayVote voteCount={voteCount[selected]} />
       <Button handleClick={setNext} text="next anecdote" />
       <Button handleClick={increaseVote} text="Vote" />
+      <h3>Anecdote with most votes</h3>
+      <DisplayAnecdote anecdote={anecdotes[maxVote]} />
+      <DisplayVote voteCount={voteCount[maxVote]} />
     </>
   )
 }
 
-const Button = ({ handleClick, text }) => (
-  <button onClick={handleClick}>{text}</button>
-)
+const DisplayAnecdote = ({ anecdote }) => (<div>{anecdote}</div>)
+const Button = ({ handleClick, text }) => (<button onClick={handleClick}>{text}</button>)
 const DisplayVote = ({ voteCount }) => {
   if (voteCount === undefined) {
     voteCount = 0
