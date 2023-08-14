@@ -7,12 +7,12 @@ sequenceDiagram
     Note right of browser: Payload: { form data, note: "test" }
     activate server
     server->>server: Create new note
-    server-->>browser: 200 Created
+    server-->>browser: 302 
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
-    server-->>browser: List of notes
+    server-->>browser: HTML document
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/main.css
