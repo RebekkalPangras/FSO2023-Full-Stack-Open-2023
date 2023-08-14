@@ -11,12 +11,23 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-   
-  const [selected, setSelected] = useState(0)
 
-  const setNext =() => {
+  const [selected, setSelected] = useState(0)
+  const [voteCount, setVoteCount] = useState({})
+
+  const setNext = () => {
     const random_number = Math.floor(Math.random() * 8)
     setSelected(random_number)
+  }
+
+  const increaseVote = () => {
+    var currentVoteCount = { ...voteCount }
+    if (currentVoteCount[selected]) {
+      currentVoteCount[selected] += 1
+    } else {
+      currentVoteCount[selected] = 1
+    }
+    setVoteCount(currentVoteCount)
   }
 
   return (
@@ -24,13 +35,22 @@ const App = () => {
       <div>
         {anecdotes[selected]}
       </div>
-      <Button handleClick={setNext} />
+      <DisplayVote voteCount={voteCount[selected]} />
+      <Button handleClick={setNext} text="next anecdote" />
+      <Button handleClick={increaseVote} text="Vote" />
     </>
   )
 }
 
-const Button = ({handleClick}) =>(
-  <button onClick={handleClick}>next anecdote</button>
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
 )
-
+const DisplayVote = ({ voteCount }) => {
+  if (voteCount === undefined) {
+    voteCount = 0
+  }
+  return (
+    <p>Has {voteCount} votes</p>
+  )
+}
 export default App
