@@ -1,3 +1,4 @@
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -6,7 +7,7 @@ sequenceDiagram
     Note right of browser: Payload: { form data, note: "test" }
     activate server
     server->>server: Create new note
-    server-->>browser: 201 Created
+    server-->>browser: 200 Created
     deactivate server
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
@@ -32,3 +33,4 @@ sequenceDiagram
     deactivate server
 
     Note right of browser: The browser executes the callback function that renders the notes
+```
