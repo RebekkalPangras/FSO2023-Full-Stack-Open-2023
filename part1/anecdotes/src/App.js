@@ -41,18 +41,18 @@ const App = () => {
 
   return (
     <>
-      <h3>Anecdote of the day</h3>
+      <Display text="Anecdote of the day" />
       <DisplayAnecdote anecdote={anecdotes[selected]} />
       <DisplayVote voteCount={voteCount[selected]} />
       <Button handleClick={setNext} text="next anecdote" />
       <Button handleClick={increaseVote} text="Vote" />
-      <h3>Anecdote with most votes</h3>
+      <Display text="Anecdote with most votes" />
       <DisplayAnecdote anecdote={anecdotes[maxVote]} />
       <DisplayVote voteCount={voteCount[maxVote]} />
     </>
   )
 }
-
+const Display = ({text}) => (<h2>{text}</h2>)
 const DisplayAnecdote = ({ anecdote }) => (<div>{anecdote}</div>)
 const Button = ({ handleClick, text }) => (<button onClick={handleClick}>{text}</button>)
 const DisplayVote = ({ voteCount }) => {
