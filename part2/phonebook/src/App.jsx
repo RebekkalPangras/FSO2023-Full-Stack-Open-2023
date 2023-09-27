@@ -19,18 +19,29 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
     const newPerson = { 'name': newName, 'number': newNumber }
-    persons.filter(person => person.name === newName).length === 0 ? addNewContact(newPerson) : [alert(newName + ' is already added to PhoneBook'), setFilteredPersons(persons)]
+    const existingContact = persons.filter(person => person.name === newName)
+    existingContact.length === 0 ? addNewContact(newPerson) : updateContact(...existingContact, newPerson)
     setNewName('')
     setNewNumber('')
     setFilterValue('')
   }
   const addNewContact = (newPerson) => {
     phonebookService.create(newPerson)
-    .then(response => { 
-      setPersons(persons.concat(response))
-      setFilteredPersons(filteredPersons.concat(response))
-    })
+      .then(response => {
+        setPersons(persons.concat(response))
+        setFilteredPersons(filteredPersons.concat(response))
+      })
   }
+
+  const updateContact = (existingContact, person) => {
+    if (confirm(`${person.name} is already to phonebook, replace the old number with a new one?`)) {
+      phonebookService.update({ 'name': person.name, 'id': existingContact.id, 'number': person.number }).then(response => {
+        setPersons(persons.map(p=>p.id==existingContact.id?response:p))
+        setFilteredPersons(filteredPersons.map(p=>p.id==existingContact.id?response:p))
+      })
+    }
+  }
+
   const handleNameInput = (event) => setNewName(event.target.value)
 
   const handleNumberInput = (event) => setNewNumber(event.target.value)
@@ -42,8 +53,8 @@ const App = () => {
   }
 
   const handleDelete = (person) => {
-    if(confirm(`Delete ${person.name} ?`)) {
-      phonebookService.deletePerson(person.id).then(()=>{
+    if (confirm(`Delete ${person.name} ?`)) {
+      phonebookService.deletePerson(person.id).then(() => {
         setPersons(persons.filter(p => p.id != person.id))
         setFilteredPersons(filteredPersons.filter(p => p.id != person.id))
       })
@@ -57,7 +68,7 @@ const App = () => {
       <h3>Add a New</h3>
       <NewForm newName={newName} newNumber={newNumber} handleNameInput={handleNameInput} handleNumberInput={handleNumberInput} handleSubmit={handleSubmit} />
       <h3>Numbers</h3>
-      <Numbers filteredPersons={filteredPersons} handleDelete={handleDelete}/>
+      <Numbers filteredPersons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
@@ -85,7 +96,7 @@ const NewForm = ({ newName, newNumber, handleNameInput, handleNumberInput, handl
 }
 
 const Numbers = ({ filteredPersons, handleDelete }) => {
-  return (filteredPersons.map(person => <div key={person.id}>{person.name} {person.number} <button onClick={()=>handleDelete(person)}>delete</button></div>)
+  return (filteredPersons.map(person => <div key={person.id}>{person.name} {person.number} <button onClick={() => handleDelete(person)}>delete</button></div>)
   )
 }
 
