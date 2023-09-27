@@ -7,9 +7,9 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
   const [filteredPersons, setFilteredPersons] = useState(persons)
+  const url = "http://localhost:3001/persons"
 
   useEffect(() => {
-    const url = "http://localhost:3001/persons"
     axios
       .get(url)
       .then(response => {
@@ -20,14 +20,20 @@ const App = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    const newPersons = persons.concat({ 'name': newName, 'number': newNumber, 'id': persons.length + 1 })
-    persons.filter(person => person.name === newName).length === 0 ? setPersons(newPersons) : alert(newName + ' is already added to PhoneBook')
+    const newPerson = { 'name': newName, 'number': newNumber }
+    persons.filter(person => person.name === newName).length === 0 ? addNewContact(newPerson) : [alert(newName + ' is already added to PhoneBook'), setFilteredPersons(persons)]
     setNewName('')
     setNewNumber('')
     setFilterValue('')
-    setFilteredPersons(newPersons)
   }
-
+  const addNewContact = (newPerson) => {
+    axios.post(url, newPerson)
+    .then(axios.get(url)
+    .then(response => { 
+      setPersons(response.data)
+      setFilteredPersons(response.data)
+    }))
+  }
   const handleNameInput = (event) => setNewName(event.target.value)
 
   const handleNumberInput = (event) => setNewNumber(event.target.value)
