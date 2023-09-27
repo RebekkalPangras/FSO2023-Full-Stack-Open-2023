@@ -41,6 +41,15 @@ const App = () => {
     filterValue !== '' ? setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(filterValue.toLowerCase()))) : setFilteredPersons(persons)
   }
 
+  const handleDelete = (person) => {
+    if(confirm(`Delete ${person.name} ?`)) {
+      phonebookService.deletePerson(person.id).then(()=>{
+        setPersons(persons.filter(p => p.id != person.id))
+        setFilteredPersons(filteredPersons.filter(p => p.id != person.id))
+      })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -48,7 +57,7 @@ const App = () => {
       <h3>Add a New</h3>
       <NewForm newName={newName} newNumber={newNumber} handleNameInput={handleNameInput} handleNumberInput={handleNumberInput} handleSubmit={handleSubmit} />
       <h3>Numbers</h3>
-      <Numbers filteredPersons={filteredPersons} />
+      <Numbers filteredPersons={filteredPersons} handleDelete={handleDelete}/>
     </div>
   )
 }
@@ -75,8 +84,8 @@ const NewForm = ({ newName, newNumber, handleNameInput, handleNumberInput, handl
   </form>)
 }
 
-const Numbers = ({ filteredPersons }) => {
-  return (filteredPersons.map(person => <div key={person.id}>{person.name} {person.number}</div>)
+const Numbers = ({ filteredPersons, handleDelete }) => {
+  return (filteredPersons.map(person => <div key={person.id}>{person.name} {person.number} <button onClick={()=>handleDelete(person)}>delete</button></div>)
   )
 }
 
