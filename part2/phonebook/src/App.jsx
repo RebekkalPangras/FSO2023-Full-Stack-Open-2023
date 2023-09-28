@@ -3,6 +3,7 @@ import phonebookService from './services/phonebook'
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [message, setMessage] = useState(null)
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
@@ -30,14 +31,22 @@ const App = () => {
       .then(response => {
         setPersons(persons.concat(response))
         setFilteredPersons(filteredPersons.concat(response))
+        setMessage(`Added ${newPerson.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
   }
 
   const updateContact = (existingContact, person) => {
     if (confirm(`${person.name} is already to phonebook, replace the old number with a new one?`)) {
       phonebookService.update({ 'name': person.name, 'id': existingContact.id, 'number': person.number }).then(response => {
-        setPersons(persons.map(p=>p.id==existingContact.id?response:p))
-        setFilteredPersons(filteredPersons.map(p=>p.id==existingContact.id?response:p))
+        setPersons(persons.map(p => p.id == existingContact.id ? response : p))
+        setFilteredPersons(filteredPersons.map(p => p.id == existingContact.id ? response : p))
+        setMessage(`Updated ${person.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
     }
   }
@@ -57,6 +66,10 @@ const App = () => {
       phonebookService.deletePerson(person.id).then(() => {
         setPersons(persons.filter(p => p.id != person.id))
         setFilteredPersons(filteredPersons.filter(p => p.id != person.id))
+        setMessage(`Deleted ${person.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
     }
   }
@@ -64,11 +77,31 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter filterValue={filterValue} handleFilter={handleFilter} />
       <h3>Add a New</h3>
       <NewForm newName={newName} newNumber={newNumber} handleNameInput={handleNameInput} handleNumberInput={handleNumberInput} handleSubmit={handleSubmit} />
       <h3>Numbers</h3>
       <Numbers filteredPersons={filteredPersons} handleDelete={handleDelete} />
+    </div>
+  )
+}
+
+const Notification = ({ message }) => {
+  const messageStyle = {
+    color: 'green',
+    background: 'lightgrey',
+    fontSize: 20,
+    borderStyle: 'solid',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10
+  }
+
+  if (message === null) return null
+  return (
+    <div style={messageStyle}>
+      {message}
     </div>
   )
 }
