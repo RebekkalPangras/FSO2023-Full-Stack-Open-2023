@@ -31,7 +31,7 @@ const App = () => {
       .then(response => {
         setPersons(persons.concat(response))
         setFilteredPersons(filteredPersons.concat(response))
-        setMessage(`Added ${newPerson.name}`)
+        setMessage({'isError': false, 'content': `Added ${newPerson.name}`})
         setTimeout(() => {
           setMessage(null)
         }, 5000)
@@ -43,7 +43,10 @@ const App = () => {
       phonebookService.update({ 'name': person.name, 'id': existingContact.id, 'number': person.number }).then(response => {
         setPersons(persons.map(p => p.id == existingContact.id ? response : p))
         setFilteredPersons(filteredPersons.map(p => p.id == existingContact.id ? response : p))
-        setMessage(`Updated ${person.name}`)
+        setMessage({'isError': false, 'content': `Updated ${person.name}`})
+      }).catch(error => {
+        setMessage({'isError': true, 'content': `Information of ${person.name} has already been removed from server`})
+      }).finally(()=> {
         setTimeout(() => {
           setMessage(null)
         }, 5000)
@@ -66,7 +69,7 @@ const App = () => {
       phonebookService.deletePerson(person.id).then(() => {
         setPersons(persons.filter(p => p.id != person.id))
         setFilteredPersons(filteredPersons.filter(p => p.id != person.id))
-        setMessage(`Deleted ${person.name}`)
+        setMessage({'isError': false, 'content': `Deleted ${person.name}`})
         setTimeout(() => {
           setMessage(null)
         }, 5000)
@@ -99,9 +102,12 @@ const Notification = ({ message }) => {
   }
 
   if (message === null) return null
+  if(message.isError) {
+    messageStyle.color='red'
+  }
   return (
     <div style={messageStyle}>
-      {message}
+      {message.content}
     </div>
   )
 }
