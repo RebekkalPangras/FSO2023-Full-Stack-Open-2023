@@ -50,10 +50,19 @@ const Country = ({ country }) => {
   const flagStyle = {
     fontSize: 100
   }
+  const [weatherData, setWeatherData] = useState(null)
+
+  useEffect(() => {
+    countries.getWeather(country.latlng[0], country.latlng[1]).then(response => {
+      setWeatherData(response)
+    })
+  }, [country.latlng])
+
   const languages = Object.values(country["languages"])
+
   return (
     <div>
-      <h2>{country.name.common}</h2>
+      <h1>{country.name.common}</h1>
       <p>Capital {country.capital}</p>
       <p>Area {country.area}</p>
       <h3>Languages:</h3>
@@ -61,6 +70,19 @@ const Country = ({ country }) => {
         {languages.map(language => <li key={language}>{language}</li>)}
       </ul>
       <div style={flagStyle}>{country.flag}</div>
+      <h2>Weather in {country.name.common}</h2>
+      {weatherData ? (<Weather weatherData={weatherData} />) : (<div>Loading Weather Data</div>)}
+
+    </div>
+  )
+}
+
+const Weather = ({ weatherData }) => {
+  return (
+    <div>
+      <p>Temperature {(weatherData.main.temp - 273.5).toFixed(2)} Celsius</p>
+      <img src={weatherData.img} alt='Weather image' />
+      <p>Wind {weatherData.wind.speed} m/s</p>
     </div>
   )
 }
