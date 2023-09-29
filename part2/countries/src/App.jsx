@@ -5,7 +5,7 @@ import countries from './services/countries'
 function App() {
   const [filterValue, setFilterValue] = useState('')
   const [countryData, setCountryData] = useState({})
-  const [filteredCountries, setFilteredCountries] = useState({})
+  const [filteredCountries, setFilteredCountries] = useState([])
 
   useEffect(() => {
     countries.readAll().then(response => setCountryData(response))
@@ -18,24 +18,27 @@ function App() {
     setFilteredCountries(filteredCountries)
   }
 
+  const showCountry = (country) => {
+    setFilteredCountries([country])
+  }
+
   return (
     <div>
       find countries <input value={filterValue} onChange={handleFilter} />
-      <CountryFilter filteredCountries={filteredCountries} />
+      <CountryFilter filteredCountries={filteredCountries} showCountry={showCountry} />
     </div>
   )
 }
 
-const CountryFilter = ({ filteredCountries }) => {
+const CountryFilter = ({ filteredCountries, showCountry }) => {
   if (filteredCountries.length != null) {
     if (filteredCountries.length > 10) return (<div>Too many matches specify another filter</div>)
     else if (filteredCountries.length === 1) {
-      console.log(filteredCountries[0])
       return <Country country={filteredCountries[0]} />
     }
     else {
       return (
-        filteredCountries.map(country => <div key={country.name.common}>{country.name.common}</div>)
+        filteredCountries.map(country => <div key={country.name.common}>{country.name.common} <button onClick={() => showCountry(country)}>show</button></div>)
       )
     }
   } else {
@@ -43,7 +46,7 @@ const CountryFilter = ({ filteredCountries }) => {
   }
 }
 
-const Country = ({country}) => {
+const Country = ({ country }) => {
   const flagStyle = {
     fontSize: 100
   }
