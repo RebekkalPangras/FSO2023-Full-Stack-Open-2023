@@ -36,7 +36,7 @@ const persons = [
     },
     {
         "name": "Rebecca Venkat",
-        "number": "403-234-0987",
+        "number": "403-000-0000",
         "id": 7
     },
     {
@@ -49,6 +49,14 @@ const persons = [
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
+
+app.get('/api/persons/:id', (request, response) => {
+    const reqId = Number(request.params.id)
+    const person = persons.find(person => person.id === reqId)
+    if(person) response.json(person)
+    else response.status(404).send({'error': 'no data exists for the given id'})
+})
+
 
 app.get('/info', (request, response) => {
     const date = new Date()
