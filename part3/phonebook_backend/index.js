@@ -52,8 +52,13 @@ app.get('/info', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const { max, min } = [100, 8]
+    const max = 100
+    const min = 8
     const person = request.body
+    
+    if (person.name === null || person.number === null) return response.status(400).send({ "error": "Name or Number missing" })
+    if ((persons.filter(p => p.name === person.name)).length > 0) return response.status(400).send({ error: 'name must be unique' })
+    
     person.id = Math.floor(Math.random() * (max - min) + min)
     persons = persons.concat(person)
     response.json(person)
