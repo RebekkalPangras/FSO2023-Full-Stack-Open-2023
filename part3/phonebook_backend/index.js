@@ -51,6 +51,14 @@ app.get('/info', (request, response) => {
     response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`)
 })
 
+app.post('/api/persons', (request, response) => {
+    const { max, min } = [100, 8]
+    const person = request.body
+    person.id = Math.floor(Math.random() * (max - min) + min)
+    persons = persons.concat(person)
+    response.json(person)
+})
+
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
