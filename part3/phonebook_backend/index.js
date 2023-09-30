@@ -3,7 +3,7 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 
-const persons = [
+let persons = [
     {
         "name": "Arto Hellas",
         "id": 1,
@@ -46,6 +46,11 @@ const persons = [
     }
 ]
 
+app.get('/info', (request, response) => {
+    const date = new Date()
+    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`)
+})
+
 app.get('/api/persons', (request, response) => {
     response.json(persons)
 })
@@ -53,14 +58,14 @@ app.get('/api/persons', (request, response) => {
 app.get('/api/persons/:id', (request, response) => {
     const reqId = Number(request.params.id)
     const person = persons.find(person => person.id === reqId)
-    if(person) response.json(person)
-    else response.status(404).send({'error': 'no data exists for the given id'})
+    if (person) response.json(person)
+    else response.status(404).send({ 'error': 'no data exists for the given id' })
 })
 
-
-app.get('/info', (request, response) => {
-    const date = new Date()
-    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${date}</p>`)
+app.delete('/api/persons/:id', (request, response) => {
+    const reqId = Number(request.params.id)
+    persons = persons.filter(person => person.id != reqId)
+    response.status(204).end()
 })
 
 app.listen(3001, () => console.log("Started listening on port 3001"))
