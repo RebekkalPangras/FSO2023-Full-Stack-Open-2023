@@ -1,8 +1,11 @@
 const express = require('express')
-
-const app = express()
+const cors = require('cors')
 const morgan = require('morgan')
 
+const app = express()
+
+app.use(cors())
+app.use(express.static('dist'))
 app.use(express.json())
 app.use(morgan(':method :url :status :req[content-length] :response-time ms :req-body'));
 
@@ -60,10 +63,10 @@ app.post('/api/persons', (request, response) => {
     const max = 100
     const min = 8
     const person = request.body
-    
-    if (person.name === null || person.number === null) return response.status(400).send({ "error": "Name or Number missing" })
-    if ((persons.filter(p => p.name === person.name)).length > 0) return response.status(400).send({ error: 'name must be unique' })
-    
+
+    if (person.name === undefined || person.number === undefined) return response.status(400).send({ error: "Name or Number missing" })
+    if ((persons.filter(p => p.name === person.name)).length > 0) return response.status(400).send({ error: "Name must be unique" })
+
     person.id = Math.floor(Math.random() * (max - min) + min)
     persons = persons.concat(person)
     response.json(person)
@@ -86,4 +89,5 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
-app.listen(3001, () => console.log("Started listening on port 3001"))
+const PORT = process.env.port || 3001
+app.listen(PORT, () => console.log("Started listening on port 3001"))
