@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const morgan = require('morgan')
-const person = require('./models/person')
+const Person = require('./models/person')
 
 const app = express()
 
@@ -18,33 +18,35 @@ app.get('/info', (request, response) => {
 })
 
 app.post('/api/persons', (request, response) => {
-    const max = 100
-    const min = 8
-    const person = request.body
+    const body = request.body
+    if (body === undefined) {
+        return response.status(400).json({ error: 'content missing' })
+    }
+    if (body.name === undefined || body.number === undefined) return response.status(400).send({ error: "Name or Number missing" })
 
-    if (person.name === undefined || person.number === undefined) return response.status(400).send({ error: "Name or Number missing" })
-    if ((persons.filter(p => p.name === person.name)).length > 0) return response.status(400).send({ error: "Name must be unique" })
-
-    person.id = Math.floor(Math.random() * (max - min) + min)
-    persons = persons.concat(person)
-    response.json(person)
+    const person = new Person({
+        name: body.name,
+        number: body.number
+    })
+    person.save().then(savedPerson => response.json(savedPerson))
 })
 
 app.get('/api/persons', (request, response) => {
-    person.find({}).then(persons=> response.json(persons))
+    Person.find({}).then(persons => response.json(persons))
 })
 
-app.get('/api/persons/:id', (request, response) => {
-    const reqId = Number(request.params.id)
-    const person = persons.find(person => person.id === reqId)
-    if (person) response.json(person)
-    else response.status(404).send({ 'error': 'no data exists for the given id' })
+app.get('/api/person/:id', (request, response) => {
+    console.log("Entered Findbyid")
+    console.log(request.params.id)
+    Person.findById(request.params.id,(err, person)=> {
+        console.log(person)
+        if(err) response.status(404).send({ 'error': 'no data exists for the given id' })
+        else response.json(person)
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    const reqId = Number(request.params.id)
-    persons = persons.filter(person => person.id != reqId)
-    response.status(204).end()
+    Person.findByIdAndDelete(request.params.id).then(response.status(204).end())
 })
 
 const PORT = process.env.port || 3001
