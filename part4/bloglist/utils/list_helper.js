@@ -14,13 +14,35 @@ const favoriteBlog = (blogs) => {
     const findFavoriteBlog = (favBlog, blog) => {
         return favBlog.likes > blog.likes ? favBlog : blog
     }
-    const {title, author, likes} = blogs.reduce(findFavoriteBlog, blogs[0])
-    console.log({title, author, likes})
-    return {title, author, likes}
+    const { title, author, likes } = blogs.reduce(findFavoriteBlog, blogs[0])
+    console.log({ title, author, likes })
+    return { title, author, likes }
+}
+
+const mostBlogs = (blogs) => {
+
+    if (blogs.length === 0) {
+        return null;
+    }
+
+    const authorCounts = blogs.reduce((counts, blog) => {
+        counts[blog.author] = (counts[blog.author] || 0) + 1;
+        return counts;
+    }, {});
+
+    const maxAuthor = Object.keys(authorCounts).reduce((a, b) =>
+        authorCounts[a] > authorCounts[b] ? a : b
+    );
+
+    return {
+        author: maxAuthor,
+        blogs: authorCounts[maxAuthor],
+    };
 }
 
 module.exports = {
     dummy,
     totalLikes,
-    favoriteBlog
+    favoriteBlog,
+    mostBlogs
 }
