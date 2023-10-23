@@ -101,6 +101,8 @@ const typeDefs = `
   }
   type Author {
     name : String!
+    born : Int!
+    id: Int
     bookCount : Int!
   }
   type Query {
@@ -116,6 +118,7 @@ const typeDefs = `
         published: String!
         genres: [String!]!
       ): Book
+    editAuthor(name:String!, setBornTo: Int!): Author
   }
 
 `
@@ -167,6 +170,16 @@ const resolvers = {
             }
             books.push(book)
             return book
+        },
+        editAuthor(root, args) {
+            let authorIndex = authors.findIndex(a => {
+                return a.name === args.name
+            })
+            if (authorIndex !== -1) {
+                authors[authorIndex].born = args.setBornTo
+                return authors[authorIndex]
+            }
+            return null
         }
     }
 }
