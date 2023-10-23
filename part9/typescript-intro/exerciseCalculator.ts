@@ -37,9 +37,21 @@ const calculateExercises = (hours: number[], target: number): ExerciseResult => 
     };
 };
 
-// Example usage
-const exerciseHours = [3, 0, 2, 4.5, 0, 3, 1];
-const targetHours = 2;
-
-const result = calculateExercises(exerciseHours, targetHours);
-console.log(result);
+const exargs = process.argv
+if (exargs.length < 3) {
+    console.log('Usage: npm run calculateExercises <target> <hours...>');
+} else {
+    const target = Number(exargs[2]);
+    if (!isNaN(target)) {
+        const exerciseHours = exargs.slice(3).map(Number);
+        if (exerciseHours.every((hour) => !isNaN(hour))) {
+            const result = calculateExercises(exerciseHours, target);
+            console.log(result);
+        } else {
+            console.log('Invalid input. Please provide valid exercise hours.');
+        }
+    } else {
+        console.log('Invalid input. Please provide a valid target.');
+    }
+}
+    
